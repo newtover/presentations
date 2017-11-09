@@ -9,6 +9,8 @@ def my_hander(event, context):
         'event': event
     }
 ```
+@[1,3]
+@[1-5]
 ---
 create lambda function
 ---
