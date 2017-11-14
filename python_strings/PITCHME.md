@@ -70,3 +70,61 @@
 В питоне это тип unicode, описанный в PEP 100.
 
 ---
+
+```
+Python 2.7.14 |Anaconda, Inc.| (default, Nov  8 2017, 22:44:41)
+[GCC 7.2.0] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> s1 = 'жаба'
+>>> s2 = u'жаба'
+>>> s1
+'\xd0\xb6\xd0\xb0\xd0\xb1\xd0\xb0!1'
+>>> s2
+u'\u0436\u0430\u0431\u0430!1'
+>>>
+```
+
+---
+
+```
+>>> import unicodedata as ud
+>>> for ch in s2: print 'U+{:04o} {} {}'.format(ord(ch), ud.category(ch), ud.name(ch))
+...
+U+2066 Ll CYRILLIC SMALL LETTER ZHE
+U+2060 Ll CYRILLIC SMALL LETTER A
+U+2061 Ll CYRILLIC SMALL LETTER BE
+U+2060 Ll CYRILLIC SMALL LETTER A
+U+0041 Po EXCLAMATION MARK
+U+0061 Nd DIGIT ONE 
+```
+
+---
+
+```
+>>> s1
+'\xd0\xb6\xd0\xb0\xd0\xb1\xd0\xb0!1'
+>>> s2
+u'\u0436\u0430\u0431\u0430!1'
+>>>
+```
+
+---
+
+```
+>>> u'abc'.encode('utf-8')  # encode text into bytes with an encoding
+'abc'
+>>> 'abc'.decode('cp1251')   # decode text from bytes
+u'abc'
+```
+
+---
+
+```
+>>> s = r'C:\Users\newtover\test.txt~'  # string of bytes
+>>> max(ord(ch) for ch in s)            # check whether all are ascii, i.e. <= 127
+126
+>>> print s.decode('shift_jisx0213').encode('utf-8')
+C:¥Users¥newtover¥test.txt‾
+```
+
+---
