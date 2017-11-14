@@ -67,7 +67,7 @@
 
 ---
 
-В питоне это тип unicode, описанный в PEP 100.
+В питоне это тип `unicode`, описанный в PEP 100.
 
 ---
 
@@ -129,3 +129,110 @@ C:¥Users¥newtover¥test.txt‾
 ```
 
 ---
+
+### Стандартный ввод
+
+---
+
+```
+>>> s1
+'\xd0\xb6\xd0\xb0\xd0\xb1\xd0\xb0!1'
+>>> s2
+u'\u0436\u0430\u0431\u0430!1'
+>>> len(s1)
+10
+>>> len(s2)
+6
+```
+
+---
+
+```
+>>> import sys
+>>> print sys.stdin.encoding
+UTF-8
+>>> s1.decode(sys.stdin.encoding) == s2
+True
+>>> s2.encode(sys.stdin.encoding) == s1
+True
+```
+
+---
+
+```
+(py27) vagrant@vagrant:~$ sudo locale-gen ru_RU.KOI8-R
+Generating locales (this might take a while)...
+  ru_RU.KOI8-R... done
+Generation complete.
+```
+
+---
+
+```
+(py27) vagrant@vagrant:~$ LC_CTYPE=ru_RU.KOI8-R python
+Python 2.7.14 |Anaconda, Inc.| (default, Nov 8 2017, 22:44:41)
+[GCC 7.2.0] on linux2
+Type "help", "copyright", "credits" or "license" ...
+>>> import sys; sys.stdin.encoding
+'KOI8-R'
+>>> 'жаба'
+'\xd0\xb6\xd0\xb0\xd1\x8e\xd0\xb1\xd0\xb0\xd1'
+>>> u'жаба'
+u'\u043f\u2564\u043f\u255f\u043f\u2560\u043f\u255f'
+```
+
+---
+
+```
+>>> s2 = _; import unicodedata as ud
+>>> for ch in s2[:4]: print 'U+{:04o} {} {}'.format(
+...  ord(ch), ud.category(ch), ud.name(ch))
+...
+U+2077 Ll CYRILLIC SMALL LETTER PE
+U+22544 So BOX DRAWINGS DOWN SINGLE AND HORIZONTAL DOUBLE
+U+2077 Ll CYRILLIC SMALL LETTER PE
+U+22537 So BOX DRAWINGS VERTICAL DOUBLE AND RIGHT SINGLE
+```
+
+---
+
+```
+>>> 'п╤п╟п╠п╟'
+'\xd0\xb6\xd0\xb0\xd1\x8e\xd0\xb1\xd0\xb0\xd1'
+>>> u'п╤п╟п╠п╟'
+u'\u043f\u2564\u043f\u255f\u043f\u2560\u043f\u255f'
+```
+
+---
+
+```
+(py27) vagrant@vagrant:~$ LC_CTYPE=ru_RU.KOI8-R luit python
+Python 2.7.14 |Anaconda, Inc.| (default, Nov  8 2017, 22:44:41)
+[GCC 7.2.0] on linux2
+Type "help", "copyright", "credits" or "license" ...
+>>> import sys; sys.stdin.encoding
+'KOI8-R'
+>>> 'жаба'
+'\xd6\xc1\xc2\xc1'
+>>> u'жаба'
+u'\u0436\u0430\u0431\u0430'
+```
+
+---
+
+```
+>>> import re
+>>> re.search('м', 'жаба')     # ничего не нашли, хорошо
+>>> re.search('м|н', 'жаба')   # тоже ничего не нашли, хорошо
+>>> re.search('[мн]', 'жаба')  # упс, чего это вдруг?
+<_sre.SRE_Match object at 0x7f04f2d46308>
+>>> re.findall('[мн]', 'жаба')
+['\xd0', '\xd0', '\xd0', '\xd0']
+```
+
+---
+
+### Откуда берется `UnicodeDecodeError`
+
+---
+
