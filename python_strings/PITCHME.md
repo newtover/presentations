@@ -130,7 +130,7 @@ C:¥Users¥newtover¥test.txt‾
 
 ---
 
-### Стандартный ввод
+Стандартный ввод
 
 ---
 
@@ -232,7 +232,226 @@ u'\u0436\u0430\u0431\u0430'
 
 ---
 
-**Откуда берется `UnicodeDecodeError`**
+Откуда берется `UnicodeDecodeError`?
 
 ---
 
+```
+>>> unicode('жаба')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in 
+ position 0: ordinal not in range(128)
+>>>
+>>> 'жаба'.decode()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in 
+ position 0: ordinal not in range(128)
+```
+
+---
+
+```
+>>> u'Mickey' + ' Mouse'
+u'Mickey Mouse'
+>>> u'Mickey Mouse' + ' - мышь'
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in
+ position 3: ordinal not in range(128)
+```
+
+---
+
+```
+>>> u'жаба'.index('ж')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in 
+ position 0: ordinal not in range(128)
+>>> 'жаба'.index(u'ж')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in 
+ position 0: ordinal not in range(128)
+>>> 'жаба'.split(u'')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in 
+ position 0: ordinal not in range(128)
+```
+
+---
+
+```
+>>> s1 = 'жаба'
+>>> s1
+'\xd0\xb6\xd0\xb0\xd0\xb1\xd0\xb0'
+>>> s1[:3]
+'\xd0\xb6\xd0'
+>>> s1[:3].decode('utf-8')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/vagrant/miniconda3/envs/py27/lib/python2.7/en
+codings/utf_8.py", line 16, in decode
+    return codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf8' codec can't decode byte 0xd0 in 
+position 2: unexpected end of data
+```
+
+---
+
+```
+>>> import codecs
+>>> with codecs.open('test.txt', encoding='utf-8') as f1:
+...   for line in f1:
+...     print repr(line), line,
+...
+u'\u0436\u0430\u0431\u0430\n' жаба
+u'\u0446\u0430\u043f\n' цап
+```
+
+---
+
+```
+$ echo print u"жаба" | python
+  File "<stdin>", line 1
+SyntaxError: Non-ASCII character '\xd0' in file <stdin> on 
+  line 1, but no encoding declared; see http://python.org/
+  dev/peps/pep-0263/ for details
+$
+$ echo $'#coding: utf-8\nprint u"жаба"' | python
+жаба
+```
+
+---
+
+```
+#coding: utf-8
+s1 = 'жаба'
+s2 = u'жаба'
+assert len(s1) == 8
+```
+
+---
+
+Откуда берется UnicodeEncodeError?
+
+---
+
+```
+>>> str(u'жаба')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeEncodeError: 'ascii' codec can't encode characters in 
+ position 0-3: ordinal not in range(128)
+>>>
+>>> u'жаба'.encode()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeEncodeError: 'ascii' codec can't encode characters in 
+ position 0-3: ordinal not in range(128)
+```
+
+---
+
+```
+>>> # интерполяция всё стерпит
+>>> print '%s-%s' % (u'жа', u'ба')       
+жа-ба
+>>> # аргументы приводятся к unicode
+>>> print u'{}-{}'.format(u'жа', u'ба')  
+жа-ба
+>>> # аргументы приводятся к str
+>>> print '{}-{}'.format(u'жа', u'ба')   
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeEncodeError: 'ascii' codec can't encode characters in 
+ position 0-1: ordinal not in range(128)
+```
+
+---
+
+```
+>>> with open('test2.txt', 'w') as f1:
+...   print >> f1, u'жаба'
+...
+Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+UnicodeEncodeError: 'ascii' codec can't encode characters in 
+ position 0-3: ordinal not in range(128)
+```
+
+---
+
+```
+>>> import codecs
+>>> with codecs.open('test2.txt', 'w', encoding='utf-8') as f1:
+...   print >> f1, u'жаба'
+...
+>>>
+```
+
+---
+
+```
+>>> import sys
+>>> sys.stdout.encoding
+'UTF-8'
+>>> print u'жаба'
+жаба
+```
+
+---
+
+```
+(py27) $ python -c 'import sys; print (sys.stdin.encoding, sys.stdout.encoding)'
+('UTF-8', 'UTF-8')
+(py27) $ echo test | python -c 'import sys; print (sys.stdin.encoding, sys.stdout.encoding)'
+(None, 'UTF-8')
+(py27) $ python -c 'import sys; print (sys.stdin.encoding, sys.stdout.encoding)' | cat
+('UTF-8', None)
+(py27) $ echo test | python -c 'import sys; print (sys.stdin.encoding, sys.stdout.encoding)' | cat
+(None, None)
+```
+
+---
+
+```
+(py27) $ python -c 'print u"\N{CYRILLIC SMALL LETTER ZHE}"' | cat
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+UnicodeEncodeError: 'ascii' codec can't encode character u'\u0436' in 
+ position 0: ordinal not in range(128)
+```
+
+---
+
+```
+(py27) vagrant@vagrant:~$ echo test | PYTHONIOENCODING=utf-8 python -c 'import sys; print sys.stdin.encoding'
+utf-8
+(py27) vagrant@vagrant:~$ PYTHONIOENCODING=utf-8 python -c 'import sys; print sys.stdout.encoding' | cat
+utf-8
+```
+
+---
+
+```
+
+Откуда берется ascii?
+
+```
+
+---
+
+```
+>>> import sys
+>>> sys.getdefaultencoding()
+'ascii'
+>>> getattr(sys, 'setdefaultencoding', 'no luck')
+'no luck'
+```
+
+
+```
