@@ -9,7 +9,7 @@
   - Введение
   - Строковые типы и немного истории
   - Стандартный ввод
-  - Ошибки UnicodeDecodeError и&#160;UnicodeEncodeError
+  - Ошибки `UnicodeDecodeError` и&#160;`UnicodeEncodeError`
   - Где живет ascii?
 
 ---
