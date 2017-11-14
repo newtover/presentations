@@ -72,9 +72,9 @@
 ---
 
 ```
-Python 2.7.14 |Anaconda, Inc.| (default, Nov  8 2017, 22:44:41)
+Python 2.7.14 |Anaconda, Inc.| (default, Nov 8 2017, 22:44:41)
 [GCC 7.2.0] on linux2
-Type "help", "copyright", "credits" or "license" for more information.
+Type "help", "copyright", "credits" or "license" ...
 >>> s1 = 'жаба'
 >>> s2 = u'жаба'
 >>> s1
@@ -88,7 +88,8 @@ u'\u0436\u0430\u0431\u0430!1'
 
 ```
 >>> import unicodedata as ud
->>> for ch in s2: print 'U+{:04o} {} {}'.format(ord(ch), ud.category(ch), ud.name(ch))
+>>> for ch in s2: print 'U+{:04o} {} {}'.format(
+...   ord(ch), ud.category(ch), ud.name(ch))
 ...
 U+2066 Ll CYRILLIC SMALL LETTER ZHE
 U+2060 Ll CYRILLIC SMALL LETTER A
@@ -111,9 +112,9 @@ u'\u0436\u0430\u0431\u0430!1'
 ---
 
 ```
->>> u'abc'.encode('utf-8')  # encode text into bytes with an encoding
+>>> u'abc'.encode('utf-8')  # encode text into bytes
 'abc'
->>> 'abc'.decode('cp1251')   # decode text from bytes
+>>> 'abc'.decode('cp1251')  # decode text from bytes
 u'abc'
 ```
 
@@ -121,7 +122,7 @@ u'abc'
 
 ```
 >>> s = r'C:\Users\newtover\test.txt~'  # string of bytes
->>> max(ord(ch) for ch in s)            # check whether all are ascii, i.e. <= 127
+>>> max(ord(ch) for ch in s)            # all are <= 127
 126
 >>> print s.decode('shift_jisx0213').encode('utf-8')
 C:¥Users¥newtover¥test.txt‾
