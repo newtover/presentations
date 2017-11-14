@@ -232,7 +232,7 @@ u'\u0436\u0430\u0431\u0430'
 
 ---
 
-### Откуда берется `UnicodeDecodeError`
+**Откуда берется `UnicodeDecodeError`**
 
 ---
 
